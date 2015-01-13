@@ -1,0 +1,31 @@
+{
+  "name" : "Get-Rabbit-Queue",
+  "version" : "1.0.0",
+  "description" : "An app to monitor RabbitMQ queues and report when they go above a threshold",
+  "main" : "./index.js",
+  "scripts" : {
+    "start" : "node index.js"
+  },
+  "dependencies" : {
+    "express" : "~4.9.x",
+    "nodemailer" : "1.3.0"
+  },
+  "engines" : {
+    "node" : "0.10.x"
+  },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/heroku/node-js-getting-started"
+  },
+  "keywords" : [ "node", "heroku", "express" ],
+  "license" : {
+    "type" : "mit"
+  },
+  "author" : {
+    "name" : "Brian Slack",
+    "url" : "http://www.depicus.com"
+  },
+  "bugs" : {
+    "url" : "http://www.depicus.com/support"
+  }
+}
