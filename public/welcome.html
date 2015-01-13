@@ -1,0 +1,17 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>RabbitMQ Queue Monitor</title>
+    </head>
+    <body>
+        <img src="img/depicus.png" alt="depicus logo" width="120" height="120" />
+        {{#records}}
+        <p>Server: {{server}}</p>
+
+                    {{#systems}}
+                    <p>{{queue}}</p>
+                    {{/systems}}
+        {{/records}}
+    </body>
+</html>

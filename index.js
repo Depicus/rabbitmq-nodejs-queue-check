@@ -1,7 +1,13 @@
 var express = require('express');
 var app = express();
-
+var mustache = require('mustache');
 var nodemailer = require('nodemailer');
+var bodyParser = require('body-parser');
+
+var http = require('http');
+var url = require('url');
+var fs = require('fs');
+var path = require("path");
 
 app.set('port', (process.env.PORT || 5000));
 app.set('checktime', process.env.CHECKTIME || 60000); // 60 seconds
@@ -80,9 +86,128 @@ var myrestart = setInterval(function () {
     mytimer = setInterval(checkRabbit(), app.get('checktime'));
 }, app.get('checktimeout'));
 
-app.get('/', function (request, response) {
-    response.send('RabbitMQ queue monitor!');
+var demoData = [{// dummy data to display
+        "server": "rabbit01.domain.local",
+        "systems": [{
+                "queue": "Bob01"
+            }, {
+                "queue": "Bill01"
+            }, {
+                "queue": "Bob02"
+            }, {
+                "queue": "Bill02"
+            }]
+    }];
+
+var options = {
+    dotfiles: 'ignore',
+    etag: false,
+    extensions: ['htm', 'html'],
+    index: false,
+    maxAge: '1d',
+    redirect: false,
+    setHeaders: function (res, path, stat) {
+        res.set('x-timestamp', Date.now())
+    }
+};
+
+var router = express.Router();
+
+// route middleware that will happen on every request
+router.use(function (req, res, next) {
+
+    // log each request to the console
+    console.log(req.method, req.url);
+    if (req.url === '/')
+    {
+        console.log('we have the route doc');
+    }
+
+    // continue doing what we were doing and go to the route
+    next();
 });
+
+// home page route (http://localhost:8080)
+router.get('/', function (req, res) {
+
+    var my_path = url.parse(req.url).pathname;
+    var full_path = path.join(process.cwd(), my_path);
+    console.log(my_path + ' and ' + full_path);
+    fs.readFile(full_path + 'public/welcome.html', 'binary', function (err, file) {
+        if (err) {
+            res.writeHeader(500, {"Content-Type": "text/plain"});
+            res.write(err + "\n");
+            res.end();
+
+        }
+        else {
+
+
+            //var slug = [req.params.slug][0]; // grab the page slug
+            var rData = {records: demoData}; // wrap the data in a global object... (mustache starts from an object then parses)
+            var page = fs.readFileSync(full_path + 'public/welcome.html', "utf8"); // bring in the HTML file
+            var html = mustache.to_html(page, rData); // replace all of the data
+            //res.send(html); // send to
+
+            //console.log(html);
+
+            res.writeHeader(200, {"Content-Type": "text/html"});
+            res.write(html, "binary");
+            res.end();
+        }
+    });
+
+    // res.send('im the home page!');  
+});
+
+// about page route (http://localhost:8080/about)
+router.get('/about', function (req, res) {
+    res.send('im the about page!');
+});
+
+app.use('/', router);
+/*
+ app.get('/',function (request, response) {
+ 
+ var my_path = url.parse(request.url).pathname;  
+ var full_path = path.join(process.cwd(),my_path);  
+ console.log(my_path + ' and ' + full_path);
+ fs.exists(full_path,function(exists){  
+ if(!exists){  
+ response.writeHeader(404, {"Content-Type": "text/plain"});    
+ response.write("404 Not Found\n");    
+ response.end();  
+ }  
+ else{  
+ fs.readFile(full_path, "binary", function(err, file) {    
+ if(err) {    
+ response.writeHeader(500, {"Content-Type": "text/plain"});    
+ response.write(err + "\n");    
+ response.end();    
+ 
+ }    
+ else{  
+ 
+ 
+ //var slug = [req.params.slug][0]; // grab the page slug
+ var rData = {records: demoData}; // wrap the data in a global object... (mustache starts from an object then parses)
+ var page = fs.readFileSync(full_path, "utf8"); // bring in the HTML file
+ var html = mustache.to_html(page, rData); // replace all of the data
+ //res.send(html); // send to
+ 
+ console.log(html);
+ 
+ response.writeHeader(200);    
+ response.write(html, "binary");    
+ response.end();  
+ }  
+ 
+ });  
+ }  
+ });  
+ //response.send('RabbitMQ queue monitor!');
+ });
+ */
 
 app.listen(app.get('port'), function () {
     console.log("RabbitMQ queue monitor app is running at localhost:" + app.get('port'));
