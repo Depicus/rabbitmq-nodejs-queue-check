@@ -86,7 +86,7 @@ var myrestart = setInterval(function () {
     mytimer = setInterval(checkRabbit(), app.get('checktime'));
 }, app.get('checktimeout'));
 
-var demoData = [{// dummy data to display
+var demoData1 = [{// dummy data to display
         "server": "rabbit01.domain.local",
         "systems": [{
                 "queue": "Bob01"
@@ -98,6 +98,8 @@ var demoData = [{// dummy data to display
                 "queue": "Bill02"
             }]
     }];
+
+var demoData = [{"memory":14128,"message_stats":{"deliver_get":10,"deliver_get_details":{"rate":0.0},"deliver_no_ack":10,"deliver_no_ack_details":{"rate":0.0},"publish":10,"publish_details":{"rate":0.0}},"messages":0,"messages_details":{"rate":0.0},"messages_ready":0,"messages_ready_details":{"rate":0.0},"messages_unacknowledged":0,"messages_unacknowledged_details":{"rate":0.0},"idle_since":"2015-01-11 20:31:32","consumer_utilisation":"","policy":"","exclusive_consumer_tag":"","consumers":1,"down_slave_nodes":"","backing_queue_status":{"q1":0,"q2":0,"delta":["delta","undefined",0,"undefined"],"q3":0,"q4":0,"len":0,"target_ram_count":"infinity","next_seq_id":0,"avg_ingress_rate":0.0,"avg_egress_rate":0.0,"avg_ack_ingress_rate":0.0,"avg_ack_egress_rate":0.0},"state":"running","messages_ram":0,"messages_ready_ram":0,"messages_unacknowledged_ram":0,"messages_persistent":0,"message_bytes":0,"message_bytes_ready":0,"message_bytes_unacknowledged":0,"message_bytes_ram":0,"message_bytes_persistent":0,"backing_queue_status":{"q1":0,"q2":0,"delta":["delta","undefined",0,"undefined"],"q3":0,"q4":0,"len":0,"target_ram_count":"infinity","next_seq_id":0,"avg_ingress_rate":0.0,"avg_egress_rate":0.0,"avg_ack_ingress_rate":0.0,"avg_ack_egress_rate":0.0},"name":"Freedom","vhost":"/","durable":true,"auto_delete":false,"arguments":{},"node":"rabbit@rabbit01"},{"memory":21936,"message_stats":{"deliver_get":8,"deliver_get_details":{"rate":0.0},"get":1,"get_details":{"rate":0.0},"get_no_ack":7,"get_no_ack_details":{"rate":0.0},"publish":7,"publish_details":{"rate":0.0},"redeliver":1,"redeliver_details":{"rate":0.0}},"messages":0,"messages_details":{"rate":0.0},"messages_ready":0,"messages_ready_details":{"rate":0.0},"messages_unacknowledged":0,"messages_unacknowledged_details":{"rate":0.0},"idle_since":"2015-01-11 16:05:46","consumer_utilisation":"","policy":"","exclusive_consumer_tag":"","consumers":0,"down_slave_nodes":"","backing_queue_status":{"q1":0,"q2":0,"delta":["delta","undefined",0,"undefined"],"q3":0,"q4":0,"len":0,"target_ram_count":"infinity","next_seq_id":7,"avg_ingress_rate":2.9114037801939964e-7,"avg_egress_rate":0.31517342803854537,"avg_ack_ingress_rate":2.9114037801939964e-7,"avg_ack_egress_rate":0.0},"state":"running","messages_ram":0,"messages_ready_ram":0,"messages_unacknowledged_ram":0,"messages_persistent":0,"message_bytes":0,"message_bytes_ready":0,"message_bytes_unacknowledged":0,"message_bytes_ram":0,"message_bytes_persistent":0,"backing_queue_status":{"q1":0,"q2":0,"delta":["delta","undefined",0,"undefined"],"q3":0,"q4":0,"len":0,"target_ram_count":"infinity","next_seq_id":7,"avg_ingress_rate":2.9114037801939964e-7,"avg_egress_rate":0.31517342803854537,"avg_ack_ingress_rate":2.9114037801939964e-7,"avg_ack_egress_rate":0.0},"name":"Options","vhost":"/","durable":true,"auto_delete":false,"arguments":{},"node":"rabbit@rabbit01"}];
 
 var options = {
     dotfiles: 'ignore',
