@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 var express = require('express');
 var app = express();
 var mustache = require('mustache');
@@ -11,7 +13,9 @@ var path = require("path");
 
 var demoData = '';
 
-app.set('port', (process.env.PORT || 5000));
+console.log('user is ' + process.env.USERNAME);
+
+app.set('port', (process.env.PORT || 5057));
 app.set('checktime', process.env.CHECKTIME || 60000); // 60 seconds
 app.set('checktimeout', process.env.CHECKTIMEOUT || 3600000); // 60 minutes 3600000
 app.set('username', (process.env.USERNAME || ''));
@@ -25,18 +29,31 @@ if (app.get('username') === '')
 }
 
 var transporter = nodemailer.createTransport({
-    service: 'Mailgun',
+    host: process.env.EMAILSERVER,
+    port: 25,
+    secure: false, // upgrade later with STARTTLS
     auth: {
-        user: app.get('username'),
-        pass: app.get('password')
+        user: "username",
+        pass: "password",
+    }, tls: {
+        // do not fail on invalid certs
+        rejectUnauthorized: false,
+    },
+});
+
+// verify connection configuration
+transporter.verify(function (error, success) {
+    if (error) {
+        console.log(error);
+    } else {
+        console.log("Server is ready to take our messages");
     }
 });
 
 function checkRabbit() {
     console.log('in to the rabbit hole...');
     var http = require('http');
-    var request = http.request({'hostname': 'rabbit01.allcleartravel.local', 'port': 15672, 'path': '/api/queues', 'auth': 'guest:guest'
-    },
+    var request = http.request({ 'hostname': process.env.SERVER, 'port': 15672, 'path': '/api/queues', 'auth': process.env.RABBITUSER },
     function (response) {
         console.log('status: ' + response.statusCode);
         response.setEncoding('utf8');
@@ -56,10 +73,10 @@ function checkRabbit() {
                     console.log('raising email alert because ' + data[i].name + ' was over 0 at ' + data[i].messages)
                     var mailOptions = {
                         from: 'AllClear Rabbit Monitor <rabbit@allclearinsurance.com>', // sender address
-                        to: 'brian.slack@allclearinsurance.com', // list of receivers
+                        to: process.env.EMAIL, // list of receivers
                         subject: 'Rabbit Queue Alert', // Subject line
                         text: 'Rabbit Queue Over 0 for ' + data[i].name, // plaintext body
-                        html: '<b>Rabbit Queue Over 0 for ' + data[i].name + '</b>' // html body
+                        html: 'Rabbit Queue Over 0 for <b>' + data[i].name + '</b>' // html body
                     };
                     // send mail with defined transport object
                     transporter.sendMail(mailOptions, function (error, info) {
@@ -122,12 +139,10 @@ router.get('/', function (req, res) {
 
         }
         else {
-
-
             //var slug = [req.params.slug][0]; // grab the page slug
             var rData = {records: demoData}; // wrap the data in a global object... (mustache starts from an object then parses)
             var page = fs.readFileSync(full_path + 'public/welcome.html', "utf8"); // bring in the HTML file
-            var html = mustache.to_html(page, rData); // replace all of the data
+            var html = mustache.render(page, rData); // replace all of the data
             //res.send(html); // send to
 
             //console.log(html);
@@ -141,55 +156,13 @@ router.get('/', function (req, res) {
     // res.send('im the home page!');  
 });
 
-// about page route (http://localhost:8080/about)
+// about page route (http://localhost:5057/about)
 router.get('/about', function (req, res) {
     res.send('im the about page!');
 });
 
 app.use('/', router);
-/*
- app.get('/',function (request, response) {
- 
- var my_path = url.parse(request.url).pathname;  
- var full_path = path.join(process.cwd(),my_path);  
- console.log(my_path + ' and ' + full_path);
- fs.exists(full_path,function(exists){  
- if(!exists){  
- response.writeHeader(404, {"Content-Type": "text/plain"});    
- response.write("404 Not Found\n");    
- response.end();  
- }  
- else{  
- fs.readFile(full_path, "binary", function(err, file) {    
- if(err) {    
- response.writeHeader(500, {"Content-Type": "text/plain"});    
- response.write(err + "\n");    
- response.end();    
- 
- }    
- else{  
- 
- 
- //var slug = [req.params.slug][0]; // grab the page slug
- var rData = {records: demoData}; // wrap the data in a global object... (mustache starts from an object then parses)
- var page = fs.readFileSync(full_path, "utf8"); // bring in the HTML file
- var html = mustache.to_html(page, rData); // replace all of the data
- //res.send(html); // send to
- 
- console.log(html);
- 
- response.writeHeader(200);    
- response.write(html, "binary");    
- response.end();  
- }  
- 
- });  
- }  
- });  
- //response.send('RabbitMQ queue monitor!');
- });
- */
 
 app.listen(app.get('port'), function () {
-    console.log("RabbitMQ queue monitor app is running at localhost:" + app.get('port'));
+    console.log("RabbitMQ queue monitor app is running at http://localhost:" + app.get('port'));
 });
