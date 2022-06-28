@@ -88,7 +88,7 @@ function checkRabbit() {
                     });
                     // disable the check for a grace period
                     clearInterval(mytimer);
-                    myrestart = setInterval(request, app.get('checktimeout'));
+                    //myrestart = setInterval(request, app.get('checktimeout'));
                 }
             }
         });
