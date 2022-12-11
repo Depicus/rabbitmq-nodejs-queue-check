@@ -54,4 +54,4 @@ var transport = nodemailer.createTransport(smtpTransport({
 }));
 ```
 
-Any questions feel free to tweet [@depicus](https://www.twitter.com/depicus) or file an issue.
+Any questions feel free to file an issue.
